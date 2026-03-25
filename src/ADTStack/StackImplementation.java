@@ -52,7 +52,7 @@ public class StackImplementation<T> implements StackInterface<T> {
 		StackImplementation<String> textInputs = new StackImplementation<>();
 		Scanner getInput = new Scanner(System.in);
 		System.out.println(
-				"Enter something to add to the stack,\n'print' to print,\n'count' to get the total number of items in the stack,\n'remove' to remove the top item from the stack\n'empty' to check if empty\n'help' for instructions again,\n'break' to end program\n");
+				"Enter something to add to the stack,\n'print' to print,\n'count' to get the total number of items in the stack,\n'clear' to empty the stack,\n'remove' to remove the top item from the stack\n'empty' to check if empty\n'help' for instructions again,\n'break' to end program\n");
 		while (true) {
 			String input = getInput.nextLine().trim();
 			if (input.isEmpty()) {
@@ -67,11 +67,14 @@ public class StackImplementation<T> implements StackInterface<T> {
 				System.out.println(textInputs.getTotal());
 			} else if (input.equalsIgnoreCase("empty")) {
 				System.out.println(textInputs.isEmpty());
+			} else if (input.equalsIgnoreCase("clear")) {
+				textInputs.clear();
+				System.out.println("Cleared");
 			} else if (input.equalsIgnoreCase("break")) {
 				break;
 			} else if (input.equalsIgnoreCase("help")) {
 				System.out.println(
-						"Enter something to add to the stack,\n'print' to print,\n'count' to get the total number of items in the stack,\n'remove' to remove the top item from the stack\n'empty' to check if empty\n'help' for instructions again,\n'break' to end program\n");
+						"Enter something to add to the stack,\n'print' to print,\n'count' to get the total number of items in the stack,\\n'clear' to empty the stack,\n'remove' to remove the top item from the stack\n'empty' to check if empty\n'help' for instructions again,\n'break' to end program\n");
 			} else {
 				// Test add
 				System.out.println(input);
