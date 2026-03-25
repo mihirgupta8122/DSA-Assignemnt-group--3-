@@ -51,22 +51,29 @@ public class StackImplementation<T> implements StackInterface<T> {
 		System.out.println("Testing Stack Implementation");
 		StackImplementation<String> textInputs = new StackImplementation<>();
 		Scanner getInput = new Scanner(System.in);
+		System.out.println(
+				"Enter something to add to the stack,\n'print' to print,\n'count' to get the total number of items in the stack,\n'remove' to remove the top item from the stack\n'empty' to check if empty\n'help' for instructions again,\n'break' to end program\n");
 		while (true) {
-			System.out
-					.println(
-							"Enter something to add to the stack,\n'print' to print,\n'count' to get the total number of items in the stack,\n'remove' to remove the top item from the stack\n'break' to end program");
 			String input = getInput.nextLine().trim();
 			if (input.isEmpty()) {
 				continue;
 			} else if (input.equalsIgnoreCase("print")) {
+				// Test peek
 				System.out.println(textInputs.peek());
 			} else if (input.equalsIgnoreCase("remove")) {
+				// Test pop
 				System.out.println(textInputs.pop());
 			} else if (input.equalsIgnoreCase("count")) {
 				System.out.println(textInputs.getTotal());
+			} else if (input.equalsIgnoreCase("empty")) {
+				System.out.println(textInputs.isEmpty());
 			} else if (input.equalsIgnoreCase("break")) {
 				break;
+			} else if (input.equalsIgnoreCase("help")) {
+				System.out.println(
+						"Enter something to add to the stack,\n'print' to print,\n'count' to get the total number of items in the stack,\n'remove' to remove the top item from the stack\n'empty' to check if empty\n'help' for instructions again,\n'break' to end program\n");
 			} else {
+				// Test add
 				System.out.println(input);
 				try {
 					textInputs.push("Added " + input);
@@ -75,6 +82,7 @@ public class StackImplementation<T> implements StackInterface<T> {
 				}
 			}
 		}
+		// To the scanner not closed error go away
 		getInput.close();
 	}
 
