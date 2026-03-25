@@ -7,11 +7,13 @@ import java.util.Scanner;
 public class StackImplementation<T> implements StackInterface<T> {
 	ArrayList<T> items = new ArrayList<>();
 
+	// Add new item to the stack
 	@Override
 	public void push(T newEntry) {
 		items.add(newEntry);
 	}
 
+	// Check the top element of the stack and also remove it
 	@Override
 	public T pop() throws EmptyStackException {
 		int totalItems = items.size();
@@ -23,6 +25,7 @@ public class StackImplementation<T> implements StackInterface<T> {
 		return toReturn;
 	}
 
+	// Check the top element of the stack without removing it
 	@Override
 	public T peek() throws EmptyStackException {
 		int totalItems = items.size();
@@ -32,22 +35,28 @@ public class StackImplementation<T> implements StackInterface<T> {
 		return items.get(totalItems - 1);
 	}
 
+	// Check if the stack is empty or not
 	@Override
 	public boolean isEmpty() {
 		int totalItems = items.size();
 		return (totalItems == 0);
 	}
 
+	// Empty the stack
 	@Override
 	public void clear() {
 		items.clear();
 	}
 
+	// Total number of items in the stack
 	public Integer getTotal() {
 		return (items.size());
 	}
 
 	public static void main(String[] args) {
+		// This is a basic test gound to test the stack
+		// Run it in console and use
+		// commands to add, remove or test
 		System.out.println("Testing Stack Implementation");
 		StackImplementation<String> textInputs = new StackImplementation<>();
 		Scanner getInput = new Scanner(System.in);
