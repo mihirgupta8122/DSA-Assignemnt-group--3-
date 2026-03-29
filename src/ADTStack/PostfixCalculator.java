@@ -29,6 +29,10 @@ public class PostfixCalculator {
         variableTree.displayTree();
     }
 
+    public void displayTree() {
+        variableTree.displayTree();
+    }
+
     // Evaluate a postfix expression
     public int evaluatePostfixExpression(String expression) {
 
@@ -44,13 +48,13 @@ public class PostfixCalculator {
                 // Check for enough operands
                 if (stack.isEmpty()) {
                     throw new IllegalArgumentException(
-                        "Malformed expression: not enough operands for operator '" + token + "'");
+                            "Malformed expression: not enough operands for operator '" + token + "'");
                 }
                 int operand2 = stack.pop();
 
                 if (stack.isEmpty()) {
                     throw new IllegalArgumentException(
-                        "Malformed expression: not enough operands for operator '" + token + "'");
+                            "Malformed expression: not enough operands for operator '" + token + "'");
                 }
                 int operand1 = stack.pop();
 
@@ -61,7 +65,7 @@ public class PostfixCalculator {
 
                 Integer value = variableTree.search(token);
 
-                if (value != null || value != -1) {
+                if (value != null) {
                     // Token is a stored variable
                     stack.push(value);
                 } else {
@@ -71,7 +75,7 @@ public class PostfixCalculator {
                         stack.push(numericValue);
                     } catch (NumberFormatException e) {
                         throw new IllegalArgumentException(
-                            "Error: '" + token + "' is not a variable or valid integer.");
+                                "Error: '" + token + "' is not a variable or valid integer.");
                     }
                 }
             }
@@ -87,18 +91,21 @@ public class PostfixCalculator {
     // Identify supported operators
     private boolean isOperator(String token) {
         return token.equals("+") ||
-               token.equals("-") ||
-               token.equals("*") ||
-               token.equals("/");
+                token.equals("-") ||
+                token.equals("*") ||
+                token.equals("/");
     }
 
     // Perform arithmetic operation
     private int performOperation(String operator, int a, int b) {
 
         switch (operator) {
-            case "+": return a + b;
-            case "-": return a - b;
-            case "*": return a * b;
+            case "+":
+                return a + b;
+            case "-":
+                return a - b;
+            case "*":
+                return a * b;
             case "/":
                 if (b == 0) {
                     throw new ArithmeticException("Division by zero error.");

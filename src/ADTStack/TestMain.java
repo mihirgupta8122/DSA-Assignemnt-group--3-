@@ -24,11 +24,11 @@ public class TestMain {
     public static void testCalculater(String expression, int expectedResult) {
         PostfixCalculator calculator = new PostfixCalculator();
         int res1 = calculator.evaluatePostfixExpression(expression);
-        System.out.println("Test 1: " + expression + " = " + res1 + " = " + expectedResult);
+        System.out.print("Test 1: " + expression + " = " + res1 + " = " + expectedResult);
         if (res1 == expectedResult) {
-            System.out.print(" Pass");
+            System.out.println("Pass");
         } else {
-            System.out.println("Fail");
+            System.out.println("\nFail");
         }
     }
 }
