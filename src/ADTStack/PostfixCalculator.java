@@ -2,115 +2,110 @@ package ADTStack;
 
 public class PostfixCalculator {
 
-	// BST that stores variable names and their integer values
-	private BinarySearchTree variableTree;
+    // BST that stores variable names and their integer values
+    private BinarySearchTree variableTree;
 
-	// Stack used during postfix evaluation
-	private StackInterface<Integer> stack;
+    // Stack used during postfix evaluation
+    private StackInterface<Integer> stack;
 
-	// Set up the calculator with a fresh BST and an empty stack
-	public PostfixCalculator() {
-		variableTree = new BinarySearchTree();
-		stack        = new ArrayStack<>();
-	}
+    // Constructor initializes BST and stack
+    public PostfixCalculator() {
+        variableTree = new BinarySearchTree();
+        stack = new ArrayStack<>();
+    }
 
-	// Store a variable and its value in the BST
-	// If the variable already exists, update its value
-	public void setVariable(String key, int value) {
-		variableTree.insert(key, value);
-	}
+    // Store or update a variable in the BST
+    public void setVariable(String key, int value) {
+        variableTree.insert(key, value);
+    }
 
-	// Remove every variable from the BST
-	public void deleteAllVariables() {
-		variableTree.deleteAll();
-	}
+    // Remove all variables from the BST
+    public void deleteAllVariables() {
+        variableTree.deleteAll();
+    }
 
-	// Display the current state of the variable BST on the console
-	public void displayTree() {
-		variableTree.displayTree();
-	}
+    // Display the current BST contents
+    public void showTree() {
+        variableTree.displayTree();
+    }
 
-	// Evaluate a postfix arithmetic expression and return the integer result
-	// Tokens must be separated by spaces, e.g. "x y + z *"
-	public int evaluatePostfixExpression(String expression) {
+    // Evaluate a postfix expression
+    public int evaluatePostfixExpression(String expression) {
 
-		// Clear the stack before each evaluation so no state carries over
-		stack.clear();
+        // Ensure stack starts empty
+        stack.clear();
 
-		// Split on whitespace to get individual tokens
-		String[] tokens = expression.trim().split("\\s+");
+        String[] tokens = expression.trim().split("\\s+");
 
-		for (String token : tokens) {
+        for (String token : tokens) {
 
-			if (isOperator(token)) {
-				// Operator: pop two operands and apply the operation
-				if (stack.isEmpty()) {
-					throw new IllegalArgumentException(
-						"Malformed expression: not enough operands for operator '" + token + "'.");
-				}
-				int operand2 = stack.pop(); // Pushed second, so it is the right operand
+            if (isOperator(token)) {
 
-				if (stack.isEmpty()) {
-					throw new IllegalArgumentException(
-						"Malformed expression: not enough operands for operator '" + token + "'.");
-				}
-				int operand1 = stack.pop(); // Pushed first, so it is the left operand
+                // Check for enough operands
+                if (stack.isEmpty()) {
+                    throw new IllegalArgumentException(
+                        "Malformed expression: not enough operands for operator '" + token + "'");
+                }
+                int operand2 = stack.pop();
 
-				int result = applyOperator(token, operand1, operand2);
-				stack.push(result);
+                if (stack.isEmpty()) {
+                    throw new IllegalArgumentException(
+                        "Malformed expression: not enough operands for operator '" + token + "'");
+                }
+                int operand1 = stack.pop();
 
-			} else {
-				// Operand: either a known variable name or an integer literal
-				int value;
+                int result = performOperation(token, operand1, operand2);
+                stack.push(result);
 
-				if (variableTree.contains(token)) {
-					// Token matches a variable stored in the BST, look up its value
-					value = variableTree.search(token);
-				} else {
-					// Try to parse the token as a plain integer
-					try {
-						value = Integer.parseInt(token);
-					} catch (NumberFormatException e) {
-						throw new IllegalArgumentException(
-							"Unknown token '" + token + "': not an operator, variable, or integer.");
-					}
-				}
+            } else {
 
-				// Push the resolved value and record it in the BST
-				stack.push(value);
-				variableTree.insert(token, value);
-			}
-		}
+                Integer value = variableTree.search(token);
 
-		// The single remaining item on the stack is the final answer
-		if (stack.isEmpty()) {
-			throw new IllegalArgumentException(
-				"Expression evaluated to nothing - check the input.");
-		}
+                if (value != null || value != -1) {
+                    // Token is a stored variable
+                    stack.push(value);
+                } else {
+                    // Try parsing as integer literal
+                    try {
+                        int numericValue = Integer.parseInt(token);
+                        stack.push(numericValue);
+                    } catch (NumberFormatException e) {
+                        throw new IllegalArgumentException(
+                            "Error: '" + token + "' is not a variable or valid integer.");
+                    }
+                }
+            }
+        }
 
-		return stack.pop();
-	}
+        if (stack.isEmpty()) {
+            throw new IllegalArgumentException("Expression evaluated to nothing.");
+        }
 
-	// Check if a token is one of the four supported arithmetic operators
-	private boolean isOperator(String token) {
-		return token.equals("+") || token.equals("-")
-			|| token.equals("*") || token.equals("/");
-	}
+        return stack.pop();
+    }
 
-	// Apply an arithmetic operator to two operands and return the result
-	private int applyOperator(String operator, int a, int b) {
-		switch (operator) {
-			case "+": return a + b;
-			case "-": return a - b;
-			case "*": return a * b;
-			case "/":
-				if (b == 0) {
-					throw new ArithmeticException("Division by zero in postfix expression.");
-				}
-				return a / b;
-			default:
-				throw new IllegalArgumentException("Unknown operator: '" + operator + "'.");
-		}
-	}
+    // Identify supported operators
+    private boolean isOperator(String token) {
+        return token.equals("+") ||
+               token.equals("-") ||
+               token.equals("*") ||
+               token.equals("/");
+    }
 
-} // end PostfixCalculator
+    // Perform arithmetic operation
+    private int performOperation(String operator, int a, int b) {
+
+        switch (operator) {
+            case "+": return a + b;
+            case "-": return a - b;
+            case "*": return a * b;
+            case "/":
+                if (b == 0) {
+                    throw new ArithmeticException("Division by zero error.");
+                }
+                return a / b;
+            default:
+                throw new IllegalArgumentException("Unsupported operator: " + operator);
+        }
+    }
+}

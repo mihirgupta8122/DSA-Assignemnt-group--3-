@@ -1,162 +1,143 @@
 package ADTStack;
 
-public class BinarySearchTree {
+public class BinarySearchTree {    
+    // Internal class that represents a single node in the BST
+    private class Node {
+        String key;   // Variable name (e.g. "x", "y")
+		    int value;    // Variable's integer value
+		    Node left;    // Left child (keys smaller than this node)
+		    Node right;   // Right child (keys larger than this node)
+		    // Create a new leaf node with the given key and value
 
-	// Inner class representing a single node in the BST
-	private class Node {
-		String key;   // Variable name (e.g. "x", "y")
-		int value;    // Variable's integer value
-		Node left;    // Left child (keys smaller than this node)
-		Node right;   // Right child (keys larger than this node)
+		    Node(String key, int value) {
+      			this.key   = key;
+	  	    	this.value = value;
+		  	    this.left  = null;
+			      this.right = null;
+		    }
+	  }
 
-		// Create a new leaf node with the given key and value
-		Node(String key, int value) {
-			this.key   = key;
-			this.value = value;
-			this.left  = null;
-			this.right = null;
-		}
-	}
+	  // Root node of the binary search tree
+    private Node root;
+  
+    // Create an empty binary search tree
+	  public BinarySearchTree() {
+		    root = null;
+	  }
 
-	// Root node of the binary search tree
-	private Node root;
+    // Insert a new key-value pair into the BST
+	  // If the key already exists, update its value
+	  public void insert(String key, int value) {
+		    root = insertRecursive(root, key, value);
+	  }
 
-	// Create an empty binary search tree
-	public BinarySearchTree() {
-		root = null;
-	}
+  	// Recursive helper to find the correct position and insert the new node
+	  private Node insertRecursive(Node current, String key, int value) {
+		    // Base case: empty spot found, create the new node here
+		    if (current == null) {
+			    return new Node(key, value);
+		    }
 
-	// Insert a new key-value pair into the BST
-	// If the key already exists, update its value
-	public void insert(String key, int value) {
-		root = insertRecursive(root, key, value);
-	}
+    		int cmp = key.compareTo(current.key);
 
-	// Recursive helper to find the correct position and insert the new node
-	private Node insertRecursive(Node current, String key, int value) {
-		// Base case: empty spot found, create the new node here
-		if (current == null) {
-			return new Node(key, value);
-		}
+		    if (cmp < 0) {
+			      // Key is smaller, go left
+			      current.left = insertRecursive(current.left, key, value);
+		    } else if (cmp > 0) {
+			  // Key is larger, go right
+			      current.right = insertRecursive(current.right, key, value);
+		    } else {
+			  // Key already exists, update the value
+			      current.value = value;
+		    }
+        return current;
+    }
 
-		int cmp = key.compareTo(current.key);
+    // Searches for a variables value by its name
+    public Integer search(String key) {
+        Node current = root;
+        while (current != null) {
+            int cmp = key.compareTo(current.key);
+            if (cmp == 0) return current.value;
+            current = (cmp < 0) ? current.left : current.right; // Navigate left or right
+        }
+        return -1; // Key not found case
+    }
+  
+    	// Check if a key exists in the BST without throwing an exception
+	  public boolean contains(String key) {
+		    Node current = root;
 
-		if (cmp < 0) {
-			// Key is smaller, go left
-			current.left = insertRecursive(current.left, key, value);
-		} else if (cmp > 0) {
-			// Key is larger, go right
-			current.right = insertRecursive(current.right, key, value);
-		} else {
-			// Key already exists, update the value
-			current.value = value;
-		}
+    		while (current != null) {
+		      	int cmp = key.compareTo(current.key);
 
-		return current;
-	}
+      			if (cmp == 0) {
+			      	  return true;
+			      } else if (cmp < 0) {
+     				    current = current.left;
+			      } else {
+	         			current = current.right;
+  			    }
+		    }
+		    return false;
+    }
 
-	// Search the BST for a key and return its value
-	// Throws IllegalArgumentException if the key is not found
-	public int search(String key) {
-		Node current = root;
 
-		while (current != null) {
-			int cmp = key.compareTo(current.key);
+    // Deletes a specific variable from the tree by its key
+    public void delete(String key) {
+        root = deleteRecursive(root, key);
+    }
 
-			if (cmp == 0) {
-				return current.value;    // Found the key
-			} else if (cmp < 0) {
-				current = current.left;  // Search left subtree
-			} else {
-				current = current.right; // Search right subtree
-			}
-		}
+    private Node deleteRecursive(Node root, String key) {
+        // In a case where the key is not in the tree
+        if (root == null) return null;
 
-		// Key was never found in the tree
-		throw new IllegalArgumentException("Variable '" + key + "' not found in BST.");
-	}
+        int cmp = key.compareTo(root.key);
+        if (cmp < 0) {
+            // Key is in the left subtree
+            root.left = deleteRecursive(root.left, key);
+        } else if (cmp > 0) {
+            // Key is in the right subtree
+            root.right = deleteRecursive(root.right, key);
+        } else {
+            
+            // If node has only one child or no child
+            if (root.left == null) return root.right;
+            else if (root.right == null) return root.left;
 
-	// Check if a key exists in the BST without throwing an exception
-	public boolean contains(String key) {
-		Node current = root;
+            // If the node has 2 child find the smallest one
+            root.key = minValue(root.right);
+            // Update value to match the new key
+            root.value = search(root.key); 
+            // Delete the duplicate node from the right subtree
+            root.right = deleteRecursive(root.right, root.key);
+        }
+        return root;
+    }
 
-		while (current != null) {
-			int cmp = key.compareTo(current.key);
+    // Helper method to find the smallest key in a subtree
+    private String minValue(Node root) {
+        String minv = root.key;
+        while (root.left != null) {
+            minv = root.left.key;
+            root = root.left;
+        }
+        return minv;
+    }
+    // Find the smallest key in a subtree (used to find the in-order successor)
+	  private Node findMin(Node node) {
+		    while (node.left != null) {
+			      node = node.left;
+		    }
+		    return node;
+	  }
 
-			if (cmp == 0) {
-				return true;
-			} else if (cmp < 0) {
-				current = current.left;
-			} else {
-				current = current.right;
-			}
-		}
+    // Deletes all of the nodes from the tree by nulling the root
+    public void deleteAll() {
+        root = null;
+    }
 
-		return false;
-	}
-
-	// Remove the node with the given key from the BST
-	public void delete(String key) {
-		root = deleteRecursive(root, key);
-	}
-
-	// Recursive helper to find and remove the target node
-	private Node deleteRecursive(Node current, String key) {
-		if (current == null) {
-			return null; // Key not in tree, nothing to do
-		}
-
-		int cmp = key.compareTo(current.key);
-
-		if (cmp < 0) {
-			// Target is in the left subtree
-			current.left = deleteRecursive(current.left, key);
-		} else if (cmp > 0) {
-			// Target is in the right subtree
-			current.right = deleteRecursive(current.right, key);
-		} else {
-			// Found the node to delete, handle the three cases
-
-			// Case 1: leaf node with no children
-			if (current.left == null && current.right == null) {
-				return null;
-			}
-
-			// Case 2a: only a right child
-			if (current.left == null) {
-				return current.right;
-			}
-
-			// Case 2b: only a left child
-			if (current.right == null) {
-				return current.left;
-			}
-
-			// Case 3: two children, replace with in-order successor
-			Node successor = findMin(current.right);
-			current.key   = successor.key;
-			current.value = successor.value;
-			// Remove the successor from the right subtree
-			current.right = deleteRecursive(current.right, successor.key);
-		}
-
-		return current;
-	}
-
-	// Find the smallest key in a subtree (used to find the in-order successor)
-	private Node findMin(Node node) {
-		while (node.left != null) {
-			node = node.left;
-		}
-		return node;
-	}
-
-	// Remove every node from the BST, leaving it empty
-	public void deleteAll() {
-		root = null;
-	}
-
-	// Print the BST to the console in a hierarchical structure
+    	// Print the BST to the console in a hierarchical structure
 	// Each node is shown as ||==> key:value, indented by its depth
 	public void displayTree() {
 		if (root == null) {
@@ -187,6 +168,5 @@ public class BinarySearchTree {
 
 		// Visit left subtree (appears lower on screen)
 		displayRecursive(node.left, depth + 1);
-	}
-
+	  }
 } // end BinarySearchTree
